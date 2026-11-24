@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>palettemint — pick a color, get a palette that actually works</title>
+<meta name="description" content="A zero-dependency color toolkit with a live playground: pick a base color, get a full 50–950 palette, WCAG contrast checks, harmonies, color-blindness previews, and copy-ready CSS variables.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="wordmark" href="./">
+      <span class="mark" aria-hidden="true"></span>
+      <b>palettemint</b>
+      <span>a tiny color toolkit</span>
+    </a>
+    <nav class="top-links" aria-label="Links">
+      <a class="chip-link" href="https://github.com/codewithkrrish/palettemint">GitHub</a>
+      <a class="chip-link solid" href="#playground">Open the playground</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- The tool, up front: pick a color, everything below updates. -->
+  <section class="hero" id="playground">
+    <div class="wrap">
+      <h1>Pick a color. <em>Get a palette that actually works.</em></h1>
+      <p class="lede">One base color in, a full design-ready scale out — with contrast
+      checked against real text, so the palette you ship is the palette people
+      can read. No sign-up, no build step, nothing leaves your browser.
+      The same math runs in Node — <code>require("./palettemint.js")</code>,
+      one file, no install.</p>
+
+      <div class="tool-grid">
+        <div class="panel" aria-label="Pick a base color">
+          <h2>Base color</h2>
+          <div class="picker-row">
+            <input type="color" class="big-picker" id="basePicker" value="#3b82f6" aria-label="Pick a base color">
+            <div class="hex-field">
+              <label for="baseHex">Hex</label>
+              <input type="text" id="baseHex" value="#3b82f6" spellcheck="false" autocomplete="off" maxlength="9">
+              <p class="hint" id="baseHint">Hex, rgb(), hsl(), or a CSS name like “tomato”.</p>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" id="randomBtn" type="button">Surprise me</button>
+            <button class="btn" id="copyHexBtn" type="button">Copy hex</button>
+          </div>
+          <div class="presets">
+            <p>Or start from one of these:</p>
+            <div class="preset-row" id="presetRow" role="group" aria-label="Preset base colors"></div>
+          </div>
+        </div>
+
+        <div class="swatch-live" id="liveSwatch">
+          <span class="swatch-name" id="liveName">Your base color</span>
+          <button class="swatch-hex" id="liveHex" type="button" title="Click to copy">#3b82f6</button>
+          <div>
+            <div class="swatch-meta" id="liveMeta"></div>
+            <div class="copy-note">Click the hex to copy it. The whole page re-skins around your color.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 50–950 scale -->
+  <section class="block" aria-label="Color scale">
+    <div class="wrap">
+      <h2>Your scale, 50 to 950</h2>
+      <p class="sub">The same stops Tailwind uses: pale tints on the left, deep shades on
+      the right, your color at 500. Every swatch is labeled with the text color
+      that reads best on it — click any swatch to copy its hex.</p>
+      <div class="scale-strip" id="scaleStrip"></div>
+    </div>
+  </section>
+
+  <!-- Contrast checker -->
+  <section class="block" aria-label="Contrast checker">
+    <div class="wrap">
+      <h2>Will people actually read it?</h2>
+      <p class="sub">WCAG 2.1 contrast, computed for real — not eyeballed. Pick a text
+      color and a background, get the ratio and the AA / AAA verdict for normal
+      and large text.</p>
+      <div class="contrast-grid">
+        <div class="panel contrast-controls">
+          <h2>Text &amp; background</h2>
+          <div class="field">
+            <label for="fgHex">Text color</label>
+            <div class="color-input-row">
+              <input type="color" id="fgPicker" value="#211c16" aria-label="Text color picker">
+              <input type="text" id="fgHex" value="#211c16" spellcheck="false" autocomplete="off" maxlength="9">
+            </div>
+          </div>
+          <div class="field">
+            <label for="bgHex">Background color</label>
+            <div class="color-input-row">
+              <input type="color" id="bgPicker" value="#ffffff" aria-label="Background color picker">
+              <input type="text" id="bgHex" value="#ffffff" spellcheck="false" autocomplete="off" maxlength="9">
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="swapBtn" type="button">Swap colors</button>
+            <button class="btn" id="useBaseBtn" type="button">Use base as background</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Result</h2>
+          <div class="ratio-big"><span id="ratioValue">—</span><small> : 1</small></div>
+          <div class="badges" id="ratioBadges"></div>
+          <div class="sample-preview" id="samplePreview">
+            <p class="sample-heading">The quick brown fox jumps over the lazy dog</p>
+            <p>Body text at this size needs 4.5:1 for AA. Large headings need 3:1.
+            If the badge below says Fail, pick a darker text or a lighter background —
+            the scale above has both.</p>
+            <p class="sample-small">Small print, like this line, is the first thing to fail. Check it too.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Harmonies -->
+  <section class="block" aria-label="Color harmonies">
+    <div class="wrap">
+      <h2>Harmonies</h2>
+      <p class="sub">Classic schemes from your base hue. Click any swatch to copy it —
+      or click it to make it the new base and rebuild everything from there.</p>
+      <div class="harmony-rows" id="harmonyRows"></div>
+    </div>
+  </section>
+
+  <!-- Color blindness -->
+  <section class="block" aria-label="Color blindness preview">
+    <div class="wrap">
+      <h2>How it looks to everyone else</h2>
+      <p class="sub">Roughly 1 in 12 men and 1 in 200 women see color differently.
+      These simulations (Machado et al. matrices) show your base color the way
+      they would see it — check before you build a UI that depends on telling
+      two colors apart.</p>
+      <div class="sim-grid" id="simGrid"></div>
+    </div>
+  </section>
+
+  <!-- CSS variables -->
+  <section class="block" aria-label="CSS variables">
+    <div class="wrap">
+      <h2>Take it with you</h2>
+      <p class="sub">Copy-ready CSS custom properties for the whole scale. Change the
+      prefix to match your project — <code>brand</code>, <code>accent</code>,
+      whatever you call it.</p>
+      <div class="vars-grid">
+        <div class="panel vars-controls">
+          <h2>Export</h2>
+          <label for="prefixInput">Variable prefix</label>
+          <input type="text" id="prefixInput" value="brand" spellcheck="false" autocomplete="off">
+          <p>Generates <code>--prefix-50</code> through <code>--prefix-950</code>,
+          ready to paste into your stylesheet.</p>
+          <div class="btn-row">
+            <button class="btn primary" id="copyVarsBtn" type="button">Copy CSS variables</button>
+          </div>
+        </div>
+        <pre class="vars-output" id="varsOutput" tabindex="0" aria-label="Generated CSS variables"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="block" aria-label="What else it does">
+    <div class="wrap">
+      <h2>And in code, the same toolkit</h2>
+      <p class="sub">The playground above is a thin page over the library. Use it in Node
+      or the browser — one file, zero dependencies.</p>
+      <div class="features">
+        <div class="feature">
+          <b>Parse anything</b>
+          <p>Hex (3, 4, 6, 8 digits), <code>rgb()</code>, <code>hsl()</code>, and all
+          148 CSS named colors. Bad input throws a <code>ColorError</code> that
+          tells you what went wrong.</p>
+        </div>
+        <div class="feature">
+          <b>Real WCAG math</b>
+          <p>Relative luminance and contrast ratios per WCAG 2.1, with AA / AAA
+          verdicts for normal and large text. Black on white is 21:1, as it
+          should be.</p>
+        </div>
+        <div class="feature">
+          <b>Palettes &amp; harmonies</b>
+          <p>Tints, shades, Tailwind-style 50–950 scales, complementary /
+          analogous / triadic / square harmonies, and color-blindness
+          simulation. Deterministic colors from strings, too.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>palettemint — a tiny color toolkit by <a href="https://github.com/codewithkrrish">Krrish</a>. MIT licensed.</span>
+    <span><a href="https://github.com/codewithkrrish/palettemint">Source on GitHub</a></span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="palettemint.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
