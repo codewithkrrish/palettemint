@@ -261,17 +261,21 @@
     var ratio = state.fg.contrast(state.bg);
     ratioValue.textContent = ratio.toFixed(2);
 
+    // One badge per bar the pair must clear: AA and AAA, for normal and
+    // large text. The badge says whether the bar is cleared, not the level
+    // the ratio happens to reach — "Normal text · AA: AAA" reads as a
+    // riddle, "Normal text · AA: Pass" doesn't.
     var rows = [
-      { label: "Normal text · AA", level: pm.wcagLevel(ratio, false) },
-      { label: "Normal text · AAA", level: ratio >= pm.thresholds.AAA ? "AAA" : "Fail" },
-      { label: "Large text · AA", level: pm.wcagLevel(ratio, true) },
-      { label: "Large text · AAA", level: ratio >= pm.thresholds.AAA_LARGE ? "AAA" : "Fail" }
+      { label: "Normal text · AA", pass: ratio >= pm.thresholds.AA },
+      { label: "Normal text · AAA", pass: ratio >= pm.thresholds.AAA },
+      { label: "Large text · AA", pass: ratio >= pm.thresholds.AA_LARGE },
+      { label: "Large text · AAA", pass: ratio >= pm.thresholds.AAA_LARGE }
     ];
     ratioBadges.innerHTML = "";
     rows.forEach(function (row) {
       var badge = document.createElement("span");
-      badge.className = "badge " + (row.level === "Fail" ? "fail" : "pass");
-      badge.textContent = row.label + ": " + row.level;
+      badge.className = "badge " + (row.pass ? "pass" : "fail");
+      badge.textContent = row.label + ": " + (row.pass ? "Pass" : "Fail");
       ratioBadges.appendChild(badge);
     });
 

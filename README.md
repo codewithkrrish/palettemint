@@ -15,6 +15,8 @@ Open `index.html` and the playground is right there — pick a base color,
 get the full scale, contrast checks, harmonies, and copy-ready CSS variables.
 No build step, no network calls, nothing leaves your browser.
 
+Live demo: **https://palettemint.vercel.app**
+
 ## What it does
 
 - **Parse anything** — hex (`#f53`, `#ff5733`, `#ff573380`), `rgb()` /

@@ -262,7 +262,6 @@ test("CLI: parse prints hex/rgb/hsl; bad input exits 2 with a human message", ()
   assert.equal(ok.status, 0);
   assert.match(ok.stdout, /#ff5733/);
   assert.match(ok.stdout, /rgb\(255, 87, 51\)/);
-
   const bad = spawnSync(process.execPath, [cli, "parse", "nope"], { encoding: "utf8" });
   assert.equal(bad.status, 2);
   assert.match(bad.stderr, /can't read/);
